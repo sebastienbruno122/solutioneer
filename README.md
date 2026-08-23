@@ -5,15 +5,43 @@ engineers, solutions consultants — built as a static Astro site with SEO as a 
 
 French is the priority market at launch (deeper content, root-level URLs); the technical structure is
 fully bilingual so English can be built out in parallel without any rework. See
-`cahier-des-charges-site-presales.pdf` and `cahier-des-charges-contenu-seo-solutioneer.pdf` (in the parent
-folder) for the full product and content brief this project was built from.
+`cahier-des-charges-site-presales.pdf`, `cahier-des-charges-contenu-seo-solutioneer.pdf`, and
+`design-brief-solutioneer.md` (in the parent folder) for the full product, content, and design briefs this
+project was built from.
 
 ## Stack
 
 - **Astro** (static output) — content collections, minimal shipped JS, excellent SEO defaults.
-- **Tailwind CSS v4** — single accent color (`#4F46E5`) defined via `@theme` in `src/styles/global.css`.
+- **Tailwind CSS v4** — design tokens defined via `@theme` in `src/styles/global.css`.
 - **Markdown + front-matter** for all articles — adding an article is adding a file, no code changes.
 - **@astrojs/sitemap** for automatic `sitemap-index.xml` generation.
+
+## Design system
+
+Built to the design brief's explicit constraint: not a generic SaaS theme, not any of the three current
+AI-design defaults (warm cream + serif + terracotta; near-black + neon; newspaper/broadsheet). Instead, a
+"technical instrument panel" register — precise, cool-neutral, quiet except for one deliberate signature.
+
+- **Color** — cool paper-gray page (`--color-canvas-soft`) with white "panel" surfaces
+  (`--color-canvas`) for cards and the header; ink-navy text (`--color-ink`, not pure black); one
+  saturated signal-blue accent (`--color-accent-500`, `#1E4FD8`) used sparingly for links, buttons, and
+  active states. All defined in `src/styles/global.css`.
+- **Type** — the IBM Plex superfamily, three deliberate roles (see brief §5), a considered alternative to
+  the "Inter everywhere" SaaS default: **Plex Sans** for display/UI (headings, nav, buttons, card titles),
+  **Plex Serif** for long-form article body copy only (`.prose-article`), **Plex Mono** for metadata/labels
+  (dates, reading time, category tags, the ToC). IBM Plex was designed by IBM for technical/engineering
+  communication — the pedigree matches the site's "tool a sales engineer would trust" positioning.
+- **Layout** — three distinct page archetypes per brief §4, not one universal template:
+  - *Articles* (`ArticleLayout.astro`, non-`pillar-guide` formats): centered `.reading-column` (70ch max),
+    no sidebar.
+  - *Pillar guides* (`format: pillar-guide`): same reading column **plus** the sticky ToC rail (see below).
+  - *Discovery pages* (blog hub, pillar listings, homepage "latest"): responsive card grid
+    (`ArticleCard.astro`), category filter as pill chips, never a dropdown.
+- **Signature element** (brief §6 — exactly one, everything else stays quiet): the sticky **ToC rail** on
+  pillar-guide articles (`TableOfContents.astro`), treated as a precision instrument panel — a thin
+  indicator bar tracks the active section via `IntersectionObserver` and CSS `transform`, mono type,
+  hairline rule. Desktop-only; collapses to an in-flow `<details>` on mobile. The pillar-label monogram
+  chip (`CategoryTag.astro`) is a secondary, deliberately restrained motif — not a second signature.
 
 ## URL structure
 

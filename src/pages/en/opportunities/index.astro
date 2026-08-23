@@ -29,7 +29,7 @@ const schema = breadcrumbSchema([
   alternatePath={pillarPath('fr', pillar)}
   structuredData={schema}
 >
-  <div class="mx-auto max-w-3xl px-5 py-14 sm:px-8 sm:py-20">
+  <div class="mx-auto max-w-6xl px-5 py-14 sm:px-8 sm:py-20">
     <Breadcrumbs items={[{ label: t('breadcrumb.home'), href: homePath(lang) }, { label: meta.label }]} />
     <h1 class="text-3xl font-bold tracking-tight text-ink sm:text-4xl">{meta.label}</h1>
     <p class="mt-4 max-w-2xl text-base leading-relaxed text-ink-soft">{meta.intro}</p>
@@ -40,13 +40,14 @@ const schema = breadcrumbSchema([
     {articles.length === 0 ? (
       <p class="mt-4 text-sm text-ink-soft">{t('pillar.empty')}</p>
     ) : (
-      <div class="mt-2 flex flex-col">
+      <div class="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {articles.map((article) => (
           <ArticleCard
             lang={lang}
             href={articlePath(lang, slugOf(article))}
             title={article.data.title}
             description={article.data.description}
+            pillarCode={meta.code}
             pillarLabel={meta.label}
             date={article.data.pubDate}
             readingMinutes={readingTime(article.body ?? '')}

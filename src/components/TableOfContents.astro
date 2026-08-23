@@ -1,0 +1,102 @@
+---
+// The signature element (design brief §6): a sticky ToC rail treated as a
+// precision instrument panel, not a generic sidebar. A thin indicator bar
+// tracks the active section via scrollspy; everything else stays quiet
+// (hairline rule, mono type, no decoration).
+interface Heading {
+  depth: number;
+  slug: string;
+  text: string;
+}
+
+interface Props {
+  headings: Heading[];
+  label: string; // localized "On this page" / "Sur cette page"
+}
+
+const { headings, label } = Astro.props;
+const items = headings.filter((h) => h.depth === 2);
+---
+
+{items.length > 0 && (
+  <>
+    {/* Desktop: sticky rail */}
+    <nav
+      class="toc-desktop sticky top-24 hidden self-start lg:block"
+      aria-label={label}
+    >
+      <p class="mb-3 font-mono text-[11px] uppercase tracking-wider text-ink-soft">{label}</p>
+      <div class="toc-rail">
+        <div class="toc-indicator" data-toc-indicator></div>
+        <ul>
+          {items.map((h) => (
+            <li>
+              <a href={`#${h.slug}`} class="toc-link" data-toc-link data-target={h.slug}>
+                {h.text}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </nav>
+
+    {/* Mobile: collapsible, in-flow — never a persistent rail on small screens */}
+    <details class="toc-mobile mb-8 rounded-lg border border-hairline bg-canvas p-4 lg:hidden">
+      <summary class="cursor-pointer font-mono text-[11px] uppercase tracking-wider text-ink-soft">
+        {label}
+      </summary>
+      <ul class="mt-3 flex flex-col gap-2">
+        {items.map((h) => (
+          <li>
+            <a href={`#${h.slug}`} class="block text-sm text-ink-soft transition-colors hover:text-accent-600">
+              {h.text}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </details>
+
+    <script is:inline>
+      (function () {
+        var links = Array.prototype.slice.call(document.querySelectorAll('[data-toc-link]'));
+        var indicator = document.querySelector('[data-toc-indicator]');
+        if (links.length === 0 || !indicator) return;
+
+        var sections = links
+          .map(function (link) {
+            var el = document.getElementById(link.getAttribute('data-target'));
+            return el ? { link: link, el: el } : null;
+          })
+          .filter(Boolean);
+
+        function setActive(link) {
+          links.forEach(function (l) {
+            l.classList.remove('is-active');
+          });
+          link.classList.add('is-active');
+          indicator.style.transform = 'translateY(' + link.offsetTop + 'px)';
+          indicator.style.height = link.offsetHeight + 'px';
+        }
+
+        if (sections.length > 0) setActive(sections[0].link);
+
+        var observer = new IntersectionObserver(
+          function (entries) {
+            entries.forEach(function (entry) {
+              if (!entry.isIntersecting) return;
+              var match = sections.find(function (s) {
+                return s.el === entry.target;
+              });
+              if (match) setActive(match.link);
+            });
+          },
+          { rootMargin: '-15% 0px -70% 0px', threshold: 0 }
+        );
+
+        sections.forEach(function (s) {
+          observer.observe(s.el);
+        });
+      })();
+    </script>
+  </>
+)}

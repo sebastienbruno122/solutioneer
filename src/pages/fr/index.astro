@@ -35,7 +35,7 @@ const latest = (await getArticles(lang)).slice(0, 6);
     </div>
   </section>
 
-  <section class="border-t border-hairline bg-canvas-soft">
+  <section class="border-y border-hairline">
     <div class="mx-auto max-w-6xl px-5 py-16 sm:px-8 sm:py-20">
       <h2 data-reveal class="text-2xl font-semibold tracking-tight text-ink">{t('home.pillarsTitle')}</h2>
       <p data-reveal class="mt-2 max-w-xl text-sm text-ink-soft">{t('home.pillarsSubtitle')}</p>
@@ -52,20 +52,21 @@ const latest = (await getArticles(lang)).slice(0, 6);
     </div>
   </section>
 
-  <section class="mx-auto max-w-3xl px-5 py-16 sm:px-8 sm:py-20">
+  <section class="mx-auto max-w-6xl px-5 py-16 sm:px-8 sm:py-20">
     <div class="flex items-end justify-between gap-4">
       <div>
         <h2 data-reveal class="text-2xl font-semibold tracking-tight text-ink">{t('home.latestTitle')}</h2>
         <p data-reveal class="mt-2 text-sm text-ink-soft">{t('home.latestSubtitle')}</p>
       </div>
     </div>
-    <div class="mt-6 flex flex-col">
+    <div class="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
       {latest.map((article) => (
         <ArticleCard
           lang={lang}
           href={articlePath(lang, slugOf(article))}
           title={article.data.title}
           description={article.data.description}
+          pillarCode={pillarMeta[lang][article.data.pillar].code}
           pillarLabel={pillarMeta[lang][article.data.pillar].label}
           date={article.data.pubDate}
           readingMinutes={readingTime(article.body ?? '')}

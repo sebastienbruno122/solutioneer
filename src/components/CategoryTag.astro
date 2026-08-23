@@ -1,0 +1,27 @@
+---
+// Consistent, restrained treatment of pillar labels (design brief §4.3/§6
+// candidate b) — kept deliberately quiet since the ToC rail carries the
+// site's one signature move. A small mono monogram, not an illustration.
+interface Props {
+  code: string;
+  label: string;
+  size?: 'sm' | 'md';
+}
+
+const { code, label, size = 'sm' } = Astro.props;
+const boxSize = size === 'sm' ? 'h-5 w-5 text-[10px]' : 'h-6 w-6 text-[11px]';
+const textSize = size === 'sm' ? 'text-xs' : 'text-sm';
+---
+
+<span class="inline-flex items-center gap-1.5">
+  <span
+    class:list={[
+      'flex shrink-0 items-center justify-center rounded-[3px] border border-accent-300 bg-accent-50 font-mono font-medium text-accent-700',
+      boxSize,
+    ]}
+    aria-hidden="true"
+  >
+    {code}
+  </span>
+  <span class:list={['font-medium text-accent-600', textSize]}>{label}</span>
+</span>

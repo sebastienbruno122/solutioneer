@@ -32,11 +32,15 @@ export const staticSlugs: Record<Lang, { blog: string; tools: string; about: str
 
 export const pillarMeta: Record<
   Lang,
-  Record<Pillar, { label: string; tagline: string; intro: string; metaTitle: string; metaDescription: string }>
+  Record<
+    Pillar,
+    { label: string; code: string; tagline: string; intro: string; metaTitle: string; metaDescription: string }
+  >
 > = {
   fr: {
     start: {
       label: 'Débuter',
+      code: 'DB',
       tagline: 'Comprendre le métier de presales et y entrer.',
       intro:
         'Vous découvrez le métier de presales, ingénieur avant-vente ou solutions engineer ? Cette section rassemble ce qu’il faut comprendre avant de vous lancer : ce que recouvre vraiment ce métier, comment y entrer avec ou sans profil technique, et le vocabulaire à maîtriser pour ne pas se perdre dans les intitulés de poste.',
@@ -46,6 +50,7 @@ export const pillarMeta: Record<
     },
     excel: {
       label: 'Exceller',
+      code: 'EX',
       tagline: 'Progresser une fois en poste : méthode, outils, retours de terrain.',
       intro:
         'Vous êtes déjà en poste ? Cette section couvre la pratique quotidienne du presales : mener une découverte client, structurer une démo qui convainc, gérer les objections techniques, réussir un POC ou répondre à un appel d’offres — avec des méthodes concrètes, pas des généralités.',
@@ -55,6 +60,7 @@ export const pillarMeta: Record<
     },
     opportunities: {
       label: 'Opportunités',
+      code: 'OP',
       tagline: 'Évolution de carrière, marché de l’emploi, rémunération.',
       intro:
         'Où le métier de presales peut-il mener ? Cette section traite des sujets de carrière : rémunération et négociation salariale, évolutions possibles vers le management, la vente ou le produit, marché de l’emploi, et vie de freelance en presales.',
@@ -66,6 +72,7 @@ export const pillarMeta: Record<
   en: {
     start: {
       label: 'Start',
+      code: 'ST',
       tagline: 'Understand the presales craft and break into it.',
       intro:
         'New to presales, sales engineering, or solutions engineering? This section covers what the role actually involves, how to break in with or without a technical background, and the vocabulary you need to make sense of the many overlapping job titles.',
@@ -75,6 +82,7 @@ export const pillarMeta: Record<
     },
     excel: {
       label: 'Excel',
+      code: 'EX',
       tagline: 'Level up once you’re in the seat: method, tools, field lessons.',
       intro:
         'Already in the role? This section focuses on day-to-day practice: running effective discovery calls, structuring demos that land, handling technical objections, running a tight POC, and responding to RFPs — concrete method, not platitudes.',
@@ -84,6 +92,7 @@ export const pillarMeta: Record<
     },
     opportunities: {
       label: 'Opportunities',
+      code: 'OP',
       tagline: 'Career growth, the job market, and compensation.',
       intro:
         'Where can a presales career lead? This section covers compensation and negotiation, career paths into management, sales, or product, the state of the job market, and what it’s like to go freelance in presales.',
@@ -127,6 +136,7 @@ export const ui = {
     'article.pillarCta': 'Voir tous les articles',
     'article.faqTitle': 'Questions fréquentes',
     'article.shareTitle': 'Partager',
+    'article.toc': 'Sur cette page',
     'breadcrumb.home': 'Accueil',
     'breadcrumb.blog': 'Blog',
     'footer.description': 'Ressources indépendantes pour les professionnels du presales, de la découverte du métier à l’évolution de carrière.',
@@ -179,6 +189,7 @@ export const ui = {
     'article.pillarCta': 'See all articles',
     'article.faqTitle': 'Frequently asked questions',
     'article.shareTitle': 'Share',
+    'article.toc': 'On this page',
     'breadcrumb.home': 'Home',
     'breadcrumb.blog': 'Blog',
     'footer.description': 'Independent resources for presales professionals, from breaking into the field to growing a career.',
