@@ -85,19 +85,16 @@ The pillar and blog-hub pages update automatically — no template changes neede
 
 Traffic is tracked with **Cloudflare Web Analytics** — free (no paid tier), cookieless/anonymous, so it
 doesn't require a GDPR cookie-consent banner (unlike Google Analytics, which was the alternative
-considered and rejected specifically to avoid that UX friction on a French/EU-priority site). The beacon
-script in `BaseLayout.astro` only renders when a token is configured, so local dev never sends data.
+considered and rejected specifically to avoid that UX friction on a French/EU-priority site).
 
-**One-time setup:**
-1. Create a free account at [dash.cloudflare.com](https://dash.cloudflare.com) if you don't have one.
-2. Go to **Analytics & Logs → Web Analytics → Add a site**. Enter your domain — you do **not** need to
-   change your DNS/nameservers or host the site on Cloudflare; "no DNS changes needed" is an option.
-3. Copy the **token** it gives you (a short hex string, from the generated `data-cf-beacon` snippet).
-4. Set it as an environment variable named `PUBLIC_CF_BEACON_TOKEN`:
-   - **On Render**: service → Environment → Add Environment Variable.
-   - **Locally**: copy `.env.example` to `.env` and paste the token in, if you want to test it in dev.
-5. Redeploy. Traffic shows up in the Cloudflare dashboard under Web Analytics — no code changes needed
-   again after this.
+Already configured and live — the real beacon token is committed as a default in `BaseLayout.astro` (it's
+not a secret; it's visible in every page's HTML source once deployed, same as any Cloudflare Web Analytics
+snippet). Traffic shows up automatically at [dash.cloudflare.com](https://dash.cloudflare.com) → **Analytics
+& Logs → Web Analytics**. No further setup needed.
+
+To point a different environment (e.g. a staging build) at a different Cloudflare property, set the
+`PUBLIC_CF_BEACON_TOKEN` env var to override the committed default — copy `.env.example` to `.env` locally,
+or add it in Render's service → Environment tab.
 
 ## Development
 

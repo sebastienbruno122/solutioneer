@@ -64,11 +64,11 @@ const schemas = [
 ];
 
 // Cloudflare Web Analytics — free, cookieless, no consent banner required.
-// Token comes from a free Cloudflare account (dash.cloudflare.com → Analytics
-// & Logs → Web Analytics → Add a site → no DNS change needed). Set it as the
-// PUBLIC_CF_BEACON_TOKEN env var (see README) — the beacon is simply omitted
-// if it isn't set, so local/preview builds never send analytics data.
-const cfBeaconToken = import.meta.env.PUBLIC_CF_BEACON_TOKEN;
+// The token isn't a secret (it's visible in every page's HTML source once
+// deployed), so it's safe to commit as a default — PUBLIC_CF_BEACON_TOKEN
+// can still override it (e.g. to point a preview build at a different
+// Cloudflare property) without a code change.
+const cfBeaconToken = import.meta.env.PUBLIC_CF_BEACON_TOKEN || '8212b3e620d0454891c64c839dce775c';
 ---
 
 <!doctype html>
@@ -108,7 +108,7 @@ const cfBeaconToken = import.meta.env.PUBLIC_CF_BEACON_TOKEN;
 
     {cfBeaconToken && (
       <script
-        defer
+        type="module"
         src="https://static.cloudflareinsights.com/beacon.min.js"
         data-cf-beacon={`{"token": "${cfBeaconToken}"}`}
       />
