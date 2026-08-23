@@ -62,6 +62,13 @@ const schemas = [
   websiteSchema,
   ...(structuredData ? (Array.isArray(structuredData) ? structuredData : [structuredData]) : []),
 ];
+
+// Cloudflare Web Analytics — free, cookieless, no consent banner required.
+// Token comes from a free Cloudflare account (dash.cloudflare.com → Analytics
+// & Logs → Web Analytics → Add a site → no DNS change needed). Set it as the
+// PUBLIC_CF_BEACON_TOKEN env var (see README) — the beacon is simply omitted
+// if it isn't set, so local/preview builds never send analytics data.
+const cfBeaconToken = import.meta.env.PUBLIC_CF_BEACON_TOKEN;
 ---
 
 <!doctype html>
@@ -99,6 +106,14 @@ const schemas = [
       <script type="application/ld+json" set:html={JSON.stringify(schema)} />
     ))}
 
+    {cfBeaconToken && (
+      <script
+        defer
+        src="https://static.cloudflareinsights.com/beacon.min.js"
+        data-cf-beacon={`{"token": "${cfBeaconToken}"}`}
+      />
+    )}
+
     <script is:inline>
       // Minimal, dependency-free scroll reveal — no library, no layout shift risk.
       (function () {
@@ -122,7 +137,7 @@ const schemas = [
       })();
     </script>
   </head>
-  <body class="min-h-screen bg-canvas text-ink">
+  <body class="min-h-screen text-ink">
     <a
       href="#main-content"
       class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-ink focus:px-4 focus:py-2 focus:text-white"
