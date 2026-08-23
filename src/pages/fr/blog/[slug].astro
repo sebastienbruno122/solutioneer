@@ -1,0 +1,16 @@
+---
+import ArticleLayout from '../../../layouts/ArticleLayout.astro';
+import { getArticles, slugOf } from '../../../lib/articles';
+
+export async function getStaticPaths() {
+  const articles = await getArticles('fr');
+  return articles.map((entry) => ({
+    params: { slug: slugOf(entry) },
+    props: { entry, allArticles: articles },
+  }));
+}
+
+const { entry, allArticles } = Astro.props;
+---
+
+<ArticleLayout lang="fr" entry={entry} allArticles={allArticles} />

@@ -1,0 +1,56 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../../components/Breadcrumbs.astro';
+import { useTranslations } from '../../../i18n/ui';
+import { homePath, aboutPath } from '../../../i18n/paths';
+
+const lang = 'fr' as const;
+const t = useTranslations(lang);
+---
+
+<BaseLayout
+  lang={lang}
+  title={`${t('about.title')}`}
+  description="Pourquoi Solutioneer existe : un site indépendant écrit par un praticien du presales, pour couvrir ce métier autrement que par des fiches génériques."
+  path={aboutPath(lang)}
+  alternatePath={aboutPath('en')}
+>
+  <div class="mx-auto max-w-2xl px-5 py-14 sm:px-8 sm:py-20">
+    <Breadcrumbs items={[{ label: t('breadcrumb.home'), href: homePath(lang) }, { label: t('nav.about') }]} />
+    <h1 class="text-3xl font-bold tracking-tight text-ink sm:text-4xl">{t('about.title')}</h1>
+
+    <div class="prose-article mt-10">
+      <p>
+        Solutioneer est un site indépendant dédié au métier de <strong>presales</strong> — qu'on l'appelle
+        ingénieur avant-vente, sales engineer, solutions engineer ou solutions consultant. Le nom
+        « Solutioneer » est volontairement fédérateur : ce métier recouvre une multitude d'intitulés selon les
+        entreprises et les pays, mais une même réalité de terrain.
+      </p>
+
+      <h2>Pourquoi ce site existe</h2>
+      <p>
+        Le presales est un métier technique et commercial encore mal couvert en français : les résultats de
+        recherche sont dominés par des fiches métier génériques (salaire, formation, description de poste)
+        qui n'aident pas vraiment à progresser une fois dans le métier, ni à comprendre concrètement ce qu'on y
+        fait au quotidien. Solutioneer prend le parti inverse : du contenu écrit du point de vue d'un
+        praticien, avec des méthodes concrètes, des retours d'expérience et des repères de carrière réels —
+        pas des généralités.
+      </p>
+
+      <h2>Qui écrit ici</h2>
+      <p>
+        Solutioneer est piloté par un professionnel du presales, qui documente ici ce qui fonctionne — et ce
+        qui ne fonctionne pas — sur le terrain : discovery, démos techniques, gestion d'objections,
+        cycles de vente complexes en environnement SaaS/tech. Une partie des articles est rédigée avec
+        assistance IA, mais chaque publication est relue, corrigée et enrichie avant mise en ligne : c'est le
+        vécu de terrain qui fait la valeur du contenu, pas le volume de publication.
+      </p>
+
+      <h2>Contact</h2>
+      <p>
+        Une question, une suggestion de sujet, ou une opportunité de collaboration ? Écrivez à
+        <a href="mailto:hello@solutioneer.io">hello@solutioneer.io</a>.
+      </p>
+    </div>
+  </div>
+</BaseLayout>

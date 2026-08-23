@@ -1,0 +1,28 @@
+---
+import { useTranslations, type Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+  items: { question: string; answer: string }[];
+}
+
+const { lang, items } = Astro.props;
+const t = useTranslations(lang);
+
+if (items.length === 0) return null;
+---
+
+<section class="mt-16 border-t border-hairline pt-10" aria-labelledby="faq-heading">
+  <h2 id="faq-heading" class="text-xl font-semibold text-ink">{t('article.faqTitle')}</h2>
+  <div class="mt-6 flex flex-col divide-y divide-hairline">
+    {items.map((item) => (
+      <details class="group py-4">
+        <summary class="flex cursor-pointer list-none items-center justify-between gap-4 text-[15px] font-medium text-ink">
+          {item.question}
+          <span class="shrink-0 text-ink-soft transition-transform duration-200 group-open:rotate-45" aria-hidden="true">+</span>
+        </summary>
+        <p class="mt-2 text-sm leading-relaxed text-ink-soft">{item.answer}</p>
+      </details>
+    ))}
+  </div>
+</section>

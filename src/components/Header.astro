@@ -1,0 +1,116 @@
+---
+import { homePath, pillarPath, blogPath, toolsPath, otherLang } from '../i18n/paths';
+import { pillars, pillarMeta, useTranslations, type Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+  currentPath: string;
+  alternatePath?: string;
+}
+
+const { lang, currentPath, alternatePath } = Astro.props;
+const t = useTranslations(lang);
+
+const navItems = [
+  { href: homePath(lang), label: t('nav.home') },
+  ...pillars.map((p) => ({ href: pillarPath(lang, p), label: pillarMeta[lang][p].label })),
+  { href: toolsPath(lang), label: t('nav.tools') },
+  { href: blogPath(lang), label: t('nav.blog') },
+];
+
+const alt = otherLang(lang);
+const switchHref = alternatePath ?? homePath(alt);
+
+function isActive(href: string) {
+  return currentPath === href || (href !== homePath(lang) && currentPath.startsWith(href));
+}
+---
+
+<header class="sticky top-0 z-40 border-b border-hairline/70 bg-canvas/85 backdrop-blur-md">
+  <div class="mx-auto flex h-16 max-w-6xl items-center justify-between px-5 sm:px-8">
+    <a href={homePath(lang)} class="flex items-center gap-2 text-[15px] font-semibold tracking-tight text-ink">
+      <span class="flex h-7 w-7 items-center justify-center rounded-md bg-accent-500 text-sm font-bold text-white">
+        S
+      </span>
+      Solutioneer
+    </a>
+
+    <nav class="hidden items-center gap-1 md:flex" aria-label="Main navigation">
+      {navItems.map((item) => (
+        <a
+          href={item.href}
+          class:list={[
+            'rounded-md px-3 py-2 text-sm font-medium transition-colors duration-150',
+            isActive(item.href)
+              ? 'text-ink'
+              : 'text-ink-soft hover:text-ink',
+          ]}
+          aria-current={isActive(item.href) ? 'page' : undefined}
+        >
+          {item.label}
+        </a>
+      ))}
+    </nav>
+
+    <div class="flex items-center gap-2">
+      <a
+        href={switchHref}
+        class="hidden rounded-md border border-hairline px-3 py-1.5 text-xs font-medium text-ink-soft transition-colors duration-150 hover:border-accent-300 hover:text-ink sm:inline-block"
+      >
+        {alt === 'fr' ? 'Français' : 'English'}
+      </a>
+
+      <button
+        type="button"
+        id="mobile-menu-button"
+        class="inline-flex h-9 w-9 items-center justify-center rounded-md text-ink md:hidden"
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+        aria-label="Toggle menu"
+      >
+        <svg id="icon-open" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+        </svg>
+        <svg id="icon-close" xmlns="http://www.w3.org/2000/svg" class="hidden h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <nav id="mobile-menu" class="hidden border-t border-hairline md:hidden" aria-label="Mobile navigation">
+    <div class="flex flex-col gap-0.5 px-5 py-3">
+      {navItems.map((item) => (
+        <a
+          href={item.href}
+          class:list={[
+            'rounded-md px-3 py-2.5 text-[15px] font-medium',
+            isActive(item.href) ? 'bg-canvas-soft text-ink' : 'text-ink-soft',
+          ]}
+        >
+          {item.label}
+        </a>
+      ))}
+      <a href={switchHref} class="mt-1 rounded-md px-3 py-2.5 text-[15px] font-medium text-accent-600">
+        {alt === 'fr' ? 'Français' : 'English'}
+      </a>
+    </div>
+  </nav>
+</header>
+
+<script is:inline>
+  (function () {
+    var btn = document.getElementById('mobile-menu-button');
+    var menu = document.getElementById('mobile-menu');
+    var iconOpen = document.getElementById('icon-open');
+    var iconClose = document.getElementById('icon-close');
+    if (!btn || !menu) return;
+    btn.addEventListener('click', function () {
+      var isHidden = menu.classList.contains('hidden');
+      menu.classList.toggle('hidden');
+      iconOpen.classList.toggle('hidden');
+      iconClose.classList.toggle('hidden');
+      btn.setAttribute('aria-expanded', String(isHidden));
+    });
+  })();
+</script>

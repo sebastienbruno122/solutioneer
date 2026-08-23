@@ -1,0 +1,113 @@
+---
+import { render } from 'astro:content';
+import BaseLayout from './BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import Faq from '../components/Faq.astro';
+import RelatedArticles from '../components/RelatedArticles.astro';
+import { useTranslations, pillarMeta, type Lang } from '../i18n/ui';
+import { homePath, pillarPath, blogPath, articlePath } from '../i18n/paths';
+import { slugOf, readingTime, getRelatedArticles, type Article } from '../lib/articles';
+import { articleSchema, breadcrumbSchema, faqSchema } from '../lib/schema';
+
+interface Props {
+  lang: Lang;
+  entry: Article;
+  allArticles: Article[];
+  alternatePath?: string;
+}
+
+const { lang, entry, allArticles, alternatePath } = Astro.props;
+const t = useTranslations(lang);
+const { Content } = await render(entry);
+
+const slug = slugOf(entry);
+const path = articlePath(lang, slug);
+const related = getRelatedArticles(entry, allArticles);
+const minutes = readingTime(entry.body ?? '');
+const pillar = pillarMeta[lang][entry.data.pillar];
+
+const site = Astro.site ?? new URL('https://solutioneer.onrender.com');
+const canonicalURL = new URL(path, site).toString();
+const imageURL = entry.data.image
+  ? new URL(entry.data.image.src, site).toString()
+  : new URL('/og-default.svg', site).toString();
+
+const schemas = [
+  articleSchema({
+    title: entry.data.title,
+    description: entry.data.description,
+    url: canonicalURL,
+    image: imageURL,
+    datePublished: entry.data.pubDate,
+    dateModified: entry.data.updatedDate,
+    authorName: entry.data.author,
+  }),
+  breadcrumbSchema([
+    { name: t('breadcrumb.home'), url: new URL(homePath(lang), site).toString() },
+    { name: pillar.label, url: new URL(pillarPath(lang, entry.data.pillar), site).toString() },
+    { name: entry.data.title, url: canonicalURL },
+  ]),
+  faqSchema(entry.data.faq),
+].filter(Boolean);
+
+const formattedDate = entry.data.pubDate.toLocaleDateString(lang === 'fr' ? 'fr-FR' : 'en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+---
+
+<BaseLayout
+  lang={lang}
+  title={entry.data.title}
+  description={entry.data.description}
+  path={path}
+  alternatePath={alternatePath}
+  ogImage={entry.data.image?.src}
+  ogType="article"
+  structuredData={schemas}
+>
+  <article class="mx-auto max-w-2xl px-5 py-14 sm:px-8 sm:py-20">
+    <Breadcrumbs
+      items={[
+        { label: t('breadcrumb.home'), href: homePath(lang) },
+        { label: pillar.label, href: pillarPath(lang, entry.data.pillar) },
+        { label: entry.data.title },
+      ]}
+    />
+
+    <p class="text-xs font-semibold uppercase tracking-wide text-accent-600">{pillar.label}</p>
+    <h1 class="mt-2 text-3xl font-bold leading-tight tracking-tight text-ink sm:text-4xl">
+      {entry.data.title}
+    </h1>
+    <div class="mt-4 flex flex-wrap items-center gap-2 text-sm text-ink-soft">
+      <time datetime={entry.data.pubDate.toISOString()}>{formattedDate}</time>
+      <span aria-hidden="true">·</span>
+      <span>{minutes} {t('meta.readingTime')}</span>
+      <span aria-hidden="true">·</span>
+      <span>{entry.data.author}</span>
+    </div>
+
+    <div class="prose-article mt-10">
+      <Content />
+    </div>
+
+    <div class="mt-10">
+      <a
+        href={pillarPath(lang, entry.data.pillar)}
+        class="inline-flex items-center gap-1.5 text-sm font-medium text-accent-600 hover:underline"
+      >
+        {t('article.pillarCta')} {pillar.label} →
+      </a>
+    </div>
+
+    <Faq lang={lang} items={entry.data.faq} />
+    <RelatedArticles lang={lang} articles={related} />
+
+    <div class="mt-16 border-t border-hairline pt-8">
+      <a href={blogPath(lang)} class="text-sm font-medium text-ink-soft transition-colors hover:text-ink">
+        ← {t('nav.blog')}
+      </a>
+    </div>
+  </article>
+</BaseLayout>

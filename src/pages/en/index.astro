@@ -1,0 +1,81 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PillarCard from '../../components/PillarCard.astro';
+import ArticleCard from '../../components/ArticleCard.astro';
+import { useTranslations, pillars, pillarMeta } from '../../i18n/ui';
+import { pillarPath, blogPath, articlePath, homePath } from '../../i18n/paths';
+import { getArticles, slugOf, readingTime } from '../../lib/articles';
+
+const lang = 'en' as const;
+const t = useTranslations(lang);
+const latest = (await getArticles(lang)).slice(0, 6);
+---
+
+<BaseLayout
+  lang={lang}
+  title="Solutioneer — The Presales Craft, Explained by Practitioners"
+  description="Guides, field lessons, and resources for sales engineers, presales consultants, and solutions architects. No generic career pages — real practitioner content."
+  path={homePath(lang)}
+  alternatePath={homePath('fr')}
+>
+  <section class="mx-auto max-w-3xl px-5 py-20 sm:px-8 sm:py-28">
+    <h1 data-reveal class="text-4xl font-bold leading-[1.1] tracking-tight text-ink sm:text-5xl">
+      {t('home.heroTitle')}
+    </h1>
+    <p data-reveal class="mt-6 max-w-xl text-lg leading-relaxed text-ink-soft">
+      {t('home.heroSubtitle')}
+    </p>
+    <div data-reveal class="mt-8">
+      <a
+        href={blogPath(lang)}
+        class="inline-flex items-center gap-2 rounded-md bg-accent-500 px-5 py-2.5 text-sm font-semibold text-white transition-colors duration-150 hover:bg-accent-600"
+      >
+        {t('home.cta')} →
+      </a>
+    </div>
+  </section>
+
+  <section class="border-t border-hairline bg-canvas-soft">
+    <div class="mx-auto max-w-6xl px-5 py-16 sm:px-8 sm:py-20">
+      <h2 data-reveal class="text-2xl font-semibold tracking-tight text-ink">{t('home.pillarsTitle')}</h2>
+      <p data-reveal class="mt-2 max-w-xl text-sm text-ink-soft">{t('home.pillarsSubtitle')}</p>
+      <div class="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
+        {pillars.map((p, i) => (
+          <PillarCard
+            href={pillarPath(lang, p)}
+            index={i + 1}
+            label={pillarMeta[lang][p].label}
+            tagline={pillarMeta[lang][p].tagline}
+          />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-3xl px-5 py-16 sm:px-8 sm:py-20">
+    <div class="flex items-end justify-between gap-4">
+      <div>
+        <h2 data-reveal class="text-2xl font-semibold tracking-tight text-ink">{t('home.latestTitle')}</h2>
+        <p data-reveal class="mt-2 text-sm text-ink-soft">{t('home.latestSubtitle')}</p>
+      </div>
+    </div>
+    <div class="mt-6 flex flex-col">
+      {latest.map((article) => (
+        <ArticleCard
+          lang={lang}
+          href={articlePath(lang, slugOf(article))}
+          title={article.data.title}
+          description={article.data.description}
+          pillarLabel={pillarMeta[lang][article.data.pillar].label}
+          date={article.data.pubDate}
+          readingMinutes={readingTime(article.body ?? '')}
+        />
+      ))}
+    </div>
+    <div class="mt-8">
+      <a href={blogPath(lang)} class="text-sm font-medium text-accent-600 hover:underline">
+        {t('home.viewAll')} →
+      </a>
+    </div>
+  </section>
+</BaseLayout>

@@ -1,0 +1,33 @@
+---
+import ArticleCard from './ArticleCard.astro';
+import { useTranslations, pillarMeta, type Lang } from '../i18n/ui';
+import { articlePath } from '../i18n/paths';
+import { slugOf, readingTime, type Article } from '../lib/articles';
+
+interface Props {
+  lang: Lang;
+  articles: Article[];
+}
+
+const { lang, articles } = Astro.props;
+const t = useTranslations(lang);
+
+if (articles.length === 0) return null;
+---
+
+<section class="mt-16 border-t border-hairline pt-10" aria-labelledby="related-heading">
+  <h2 id="related-heading" class="text-xl font-semibold text-ink">{t('article.relatedTitle')}</h2>
+  <div class="mt-2 flex flex-col">
+    {articles.map((article) => (
+      <ArticleCard
+        lang={lang}
+        href={articlePath(lang, slugOf(article))}
+        title={article.data.title}
+        description={article.data.description}
+        pillarLabel={pillarMeta[lang][article.data.pillar].label}
+        date={article.data.pubDate}
+        readingMinutes={readingTime(article.body ?? '')}
+      />
+    ))}
+  </div>
+</section>

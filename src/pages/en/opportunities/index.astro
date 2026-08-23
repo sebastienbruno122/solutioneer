@@ -1,0 +1,58 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../../components/Breadcrumbs.astro';
+import ArticleCard from '../../../components/ArticleCard.astro';
+import { useTranslations, pillarMeta } from '../../../i18n/ui';
+import { homePath, pillarPath, articlePath } from '../../../i18n/paths';
+import { getArticlesByPillar, slugOf, readingTime } from '../../../lib/articles';
+import { breadcrumbSchema } from '../../../lib/schema';
+
+const lang = 'en' as const;
+const pillar = 'opportunities' as const;
+const t = useTranslations(lang);
+const meta = pillarMeta[lang][pillar];
+const articles = await getArticlesByPillar(lang, pillar);
+const path = pillarPath(lang, pillar);
+
+const site = 'https://solutioneer.onrender.com';
+const schema = breadcrumbSchema([
+  { name: t('breadcrumb.home'), url: `${site}${homePath(lang)}` },
+  { name: meta.label, url: `${site}${path}` },
+]);
+---
+
+<BaseLayout
+  lang={lang}
+  title={meta.metaTitle}
+  description={meta.metaDescription}
+  path={path}
+  alternatePath={pillarPath('fr', pillar)}
+  structuredData={schema}
+>
+  <div class="mx-auto max-w-3xl px-5 py-14 sm:px-8 sm:py-20">
+    <Breadcrumbs items={[{ label: t('breadcrumb.home'), href: homePath(lang) }, { label: meta.label }]} />
+    <h1 class="text-3xl font-bold tracking-tight text-ink sm:text-4xl">{meta.label}</h1>
+    <p class="mt-4 max-w-2xl text-base leading-relaxed text-ink-soft">{meta.intro}</p>
+
+    <h2 class="mt-12 text-sm font-semibold uppercase tracking-wide text-ink-soft">
+      {t('pillar.articlesTitle')}
+    </h2>
+    {articles.length === 0 ? (
+      <p class="mt-4 text-sm text-ink-soft">{t('pillar.empty')}</p>
+    ) : (
+      <div class="mt-2 flex flex-col">
+        {articles.map((article) => (
+          <ArticleCard
+            lang={lang}
+            href={articlePath(lang, slugOf(article))}
+            title={article.data.title}
+            description={article.data.description}
+            pillarLabel={meta.label}
+            date={article.data.pubDate}
+            readingMinutes={readingTime(article.body ?? '')}
+          />
+        ))}
+      </div>
+    )}
+  </div>
+</BaseLayout>

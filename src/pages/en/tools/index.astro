@@ -1,0 +1,28 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../../components/Breadcrumbs.astro';
+import { useTranslations } from '../../../i18n/ui';
+import { homePath, toolsPath } from '../../../i18n/paths';
+
+const lang = 'en' as const;
+const t = useTranslations(lang);
+---
+
+<BaseLayout
+  lang={lang}
+  title={`${t('tools.title')} — Solutioneer`}
+  description="Salary simulator, demo-prep checklist, discovery templates: upcoming interactive tools for presales professionals."
+  path={toolsPath(lang)}
+  alternatePath={toolsPath('fr')}
+>
+  <div class="mx-auto max-w-3xl px-5 py-14 sm:px-8 sm:py-20">
+    <Breadcrumbs items={[{ label: t('breadcrumb.home'), href: homePath(lang) }, { label: t('nav.tools') }]} />
+    <h1 class="text-3xl font-bold tracking-tight text-ink sm:text-4xl">{t('tools.title')}</h1>
+    <p class="mt-4 max-w-2xl text-base leading-relaxed text-ink-soft">{t('tools.subtitle')}</p>
+
+    <div class="mt-12 rounded-xl border border-dashed border-hairline p-10 text-center">
+      <p class="text-sm font-semibold text-accent-600">{t('tools.comingSoonTitle')}</p>
+      <p class="mx-auto mt-3 max-w-md text-sm leading-relaxed text-ink-soft">{t('tools.comingSoonBody')}</p>
+    </div>
+  </div>
+</BaseLayout>

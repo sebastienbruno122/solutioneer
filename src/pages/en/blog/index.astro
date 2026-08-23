@@ -1,0 +1,79 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../../components/Breadcrumbs.astro';
+import ArticleCard from '../../../components/ArticleCard.astro';
+import { useTranslations, pillars, pillarMeta } from '../../../i18n/ui';
+import { homePath, blogPath, articlePath } from '../../../i18n/paths';
+import { getArticles, slugOf, readingTime } from '../../../lib/articles';
+
+const lang = 'en' as const;
+const t = useTranslations(lang);
+const articles = await getArticles(lang);
+---
+
+<BaseLayout
+  lang={lang}
+  title={`${t('blog.title')} — Solutioneer`}
+  description="Every Solutioneer article on presales: getting started, excelling in the role, and career opportunities. Filterable by category."
+  path={blogPath(lang)}
+  alternatePath={blogPath('fr')}
+>
+  <div class="mx-auto max-w-3xl px-5 py-14 sm:px-8 sm:py-20">
+    <Breadcrumbs items={[{ label: t('breadcrumb.home'), href: homePath(lang) }, { label: t('nav.blog') }]} />
+    <h1 class="text-3xl font-bold tracking-tight text-ink sm:text-4xl">{t('blog.title')}</h1>
+    <p class="mt-4 max-w-2xl text-base leading-relaxed text-ink-soft">{t('blog.subtitle')}</p>
+
+    <div class="mt-8 flex flex-wrap gap-2" role="tablist" aria-label="Filter by category">
+      <button type="button" data-filter="all" class="filter-btn is-active rounded-full border border-accent-300 px-3.5 py-1.5 text-xs font-medium text-ink transition-colors">
+        {t('blog.filterAll')}
+      </button>
+      {pillars.map((p) => (
+        <button type="button" data-filter={p} class="filter-btn rounded-full border border-hairline px-3.5 py-1.5 text-xs font-medium text-ink-soft transition-colors">
+          {pillarMeta[lang][p].label}
+        </button>
+      ))}
+    </div>
+
+    {articles.length === 0 ? (
+      <p class="mt-10 text-sm text-ink-soft">{t('blog.empty')}</p>
+    ) : (
+      <div id="article-list" class="mt-4 flex flex-col">
+        {articles.map((article) => (
+          <div data-pillar={article.data.pillar}>
+            <ArticleCard
+              lang={lang}
+              href={articlePath(lang, slugOf(article))}
+              title={article.data.title}
+              description={article.data.description}
+              pillarLabel={pillarMeta[lang][article.data.pillar].label}
+              date={article.data.pubDate}
+              readingMinutes={readingTime(article.body ?? '')}
+            />
+          </div>
+        ))}
+      </div>
+    )}
+  </div>
+</BaseLayout>
+
+<script is:inline>
+  (function () {
+    var buttons = document.querySelectorAll('.filter-btn');
+    var items = document.querySelectorAll('#article-list > [data-pillar]');
+    buttons.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        buttons.forEach(function (b) {
+          b.classList.remove('is-active', 'text-ink', 'border-accent-300');
+          b.classList.add('text-ink-soft', 'border-hairline');
+        });
+        btn.classList.add('is-active', 'text-ink', 'border-accent-300');
+        btn.classList.remove('text-ink-soft', 'border-hairline');
+        var filter = btn.getAttribute('data-filter');
+        items.forEach(function (item) {
+          var show = filter === 'all' || item.getAttribute('data-pillar') === filter;
+          item.style.display = show ? '' : 'none';
+        });
+      });
+    });
+  })();
+</script>

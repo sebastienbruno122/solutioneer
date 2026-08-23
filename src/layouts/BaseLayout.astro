@@ -1,0 +1,138 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { otherLang } from '../i18n/paths';
+import type { Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+  title: string;
+  description: string;
+  path: string; // current path, e.g. /fr/debuter/
+  alternatePath?: string; // same page in the other language, if it exists
+  ogImage?: string;
+  ogType?: 'website' | 'article';
+  noindex?: boolean;
+  structuredData?: Record<string, unknown> | Record<string, unknown>[];
+}
+
+const {
+  lang,
+  title,
+  description,
+  path,
+  alternatePath,
+  ogImage,
+  ogType = 'website',
+  noindex = false,
+  structuredData,
+} = Astro.props;
+
+const site = Astro.site ?? new URL('https://solutioneer.onrender.com');
+const canonicalURL = new URL(path, site);
+const defaultOgImage = new URL('/og-default.svg', site);
+const resolvedOgImage = ogImage ? new URL(ogImage, site) : defaultOgImage;
+const fullTitle = title.includes('Solutioneer') ? title : `${title} · Solutioneer`;
+
+const alt = alternatePath ? otherLang(lang) : undefined;
+
+// hreflang cluster: self-reference + alternate (when one exists) + a fixed
+// x-default. French is the priority market (see content strategy), so it's
+// the fixed x-default target whenever a French version of the page exists.
+const defaultHreflangURL = lang === 'fr' ? canonicalURL : alternatePath ? new URL(alternatePath, site) : canonicalURL;
+
+const organizationSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'Solutioneer',
+  url: site.toString(),
+  logo: new URL('/favicon.svg', site).toString(),
+};
+
+const websiteSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'Solutioneer',
+  url: site.toString(),
+};
+
+const schemas = [
+  organizationSchema,
+  websiteSchema,
+  ...(structuredData ? (Array.isArray(structuredData) ? structuredData : [structuredData]) : []),
+];
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="canonical" href={canonicalURL} />
+
+    <link rel="alternate" hreflang={lang} href={canonicalURL} />
+    {alt && alternatePath && <link rel="alternate" hreflang={alt} href={new URL(alternatePath, site)} />}
+    <link rel="alternate" hreflang="x-default" href={defaultHreflangURL} />
+
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+
+    <!-- Open Graph -->
+    <meta property="og:site_name" content="Solutioneer" />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:image" content={resolvedOgImage} />
+    <meta property="og:locale" content={lang === 'fr' ? 'fr_FR' : 'en_US'} />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={resolvedOgImage} />
+
+    {schemas.map((schema) => (
+      <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+    ))}
+
+    <script is:inline>
+      // Minimal, dependency-free scroll reveal — no library, no layout shift risk.
+      (function () {
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        var observer = new IntersectionObserver(
+          function (entries) {
+            entries.forEach(function (entry) {
+              if (entry.isIntersecting) {
+                entry.target.classList.add('is-visible');
+                observer.unobserve(entry.target);
+              }
+            });
+          },
+          { threshold: 0.1, rootMargin: '0px 0px -40px 0px' }
+        );
+        document.addEventListener('DOMContentLoaded', function () {
+          document.querySelectorAll('[data-reveal]').forEach(function (el) {
+            observer.observe(el);
+          });
+        });
+      })();
+    </script>
+  </head>
+  <body class="min-h-screen bg-canvas text-ink">
+    <a
+      href="#main-content"
+      class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-ink focus:px-4 focus:py-2 focus:text-white"
+    >
+      Skip to main content
+    </a>
+    <Header lang={lang} currentPath={path} alternatePath={alternatePath} />
+    <main id="main-content">
+      <slot />
+    </main>
+    <Footer lang={lang} />
+  </body>
+</html>

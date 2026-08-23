@@ -1,0 +1,48 @@
+---
+import { homePath, pillarPath, blogPath, toolsPath, aboutPath } from '../i18n/paths';
+import { pillars, pillarMeta, useTranslations, type Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const year = new Date().getFullYear();
+---
+
+<footer class="border-t border-hairline">
+  <div class="mx-auto grid max-w-6xl grid-cols-1 gap-10 px-5 py-14 sm:px-8 md:grid-cols-[1.4fr_1fr_1fr]">
+    <div>
+      <a href={homePath(lang)} class="flex items-center gap-2 text-[15px] font-semibold text-ink">
+        <span class="flex h-7 w-7 items-center justify-center rounded-md bg-accent-500 text-sm font-bold text-white">
+          S
+        </span>
+        Solutioneer
+      </a>
+      <p class="mt-3 max-w-sm text-sm leading-relaxed text-ink-soft">{t('footer.description')}</p>
+    </div>
+
+    <div>
+      <p class="text-xs font-semibold uppercase tracking-wide text-ink-soft">{t('footer.sections')}</p>
+      <ul class="mt-3 flex flex-col gap-2 text-sm">
+        {pillars.map((p) => (
+          <li><a href={pillarPath(lang, p)} class="text-ink-soft transition-colors hover:text-ink">{pillarMeta[lang][p].label}</a></li>
+        ))}
+        <li><a href={blogPath(lang)} class="text-ink-soft transition-colors hover:text-ink">{t('nav.blog')}</a></li>
+        <li><a href={toolsPath(lang)} class="text-ink-soft transition-colors hover:text-ink">{t('nav.tools')}</a></li>
+      </ul>
+    </div>
+
+    <div>
+      <p class="text-xs font-semibold uppercase tracking-wide text-ink-soft">{t('footer.legal')}</p>
+      <ul class="mt-3 flex flex-col gap-2 text-sm">
+        <li><a href={aboutPath(lang)} class="text-ink-soft transition-colors hover:text-ink">{t('nav.about')}</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="border-t border-hairline px-5 py-6 sm:px-8">
+    <p class="mx-auto max-w-6xl text-xs text-ink-soft">© {year} Solutioneer. {t('footer.rights')}</p>
+  </div>
+</footer>

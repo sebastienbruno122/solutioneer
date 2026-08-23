@@ -1,0 +1,55 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../../components/Breadcrumbs.astro';
+import { useTranslations } from '../../../i18n/ui';
+import { homePath, aboutPath } from '../../../i18n/paths';
+
+const lang = 'en' as const;
+const t = useTranslations(lang);
+---
+
+<BaseLayout
+  lang={lang}
+  title={`${t('about.title')}`}
+  description="Why Solutioneer exists: an independent site written by a presales practitioner, covering the field without the generic career-page filler."
+  path={aboutPath(lang)}
+  alternatePath={aboutPath('fr')}
+>
+  <div class="mx-auto max-w-2xl px-5 py-14 sm:px-8 sm:py-20">
+    <Breadcrumbs items={[{ label: t('breadcrumb.home'), href: homePath(lang) }, { label: t('nav.about') }]} />
+    <h1 class="text-3xl font-bold tracking-tight text-ink sm:text-4xl">{t('about.title')}</h1>
+
+    <div class="prose-article mt-10">
+      <p>
+        Solutioneer is an independent site dedicated to the <strong>presales</strong> craft — whether you call
+        it sales engineering, solutions engineering, or solutions consulting. The name is deliberately
+        job-title-agnostic: this profession goes by a dozen different titles depending on the company and
+        the country, but it's the same job on the ground.
+      </p>
+
+      <h2>Why this site exists</h2>
+      <p>
+        Presales is a technical, commercial job that's poorly served by most career content: search results
+        are dominated by generic role descriptions (salary bands, degree requirements, job descriptions) that
+        don't actually help you get better at the job or understand what a normal week looks like.
+        Solutioneer takes the opposite approach: content written from a practitioner's point of view, with
+        concrete method, field lessons, and real career context — not platitudes.
+      </p>
+
+      <h2>Who writes this</h2>
+      <p>
+        Solutioneer is run by a working presales professional who documents what actually works — and what
+        doesn't — on the ground: discovery calls, technical demos, objection handling, and complex sales
+        cycles in SaaS/tech environments. Some articles are drafted with AI assistance, but every piece is
+        reviewed, corrected, and enriched with real experience before it's published — the field knowledge is
+        what makes it worth reading, not the publishing volume.
+      </p>
+
+      <h2>Contact</h2>
+      <p>
+        Question, topic suggestion, or a collaboration idea? Reach out at
+        <a href="mailto:hello@solutioneer.io">hello@solutioneer.io</a>.
+      </p>
+    </div>
+  </div>
+</BaseLayout>
